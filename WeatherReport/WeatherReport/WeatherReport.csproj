@@ -136,10 +136,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Home\index.cshtml" />
-    <Content Include="Configs\WeatherAPIKey.config" />
-    <Content Include="Configs\GoogleAPIClientID.config" />
-    <Content Include="Configs\GoogleAPIKey.config" />
-    <Content Include="Configs\GoogleAPIClientSecret.config" />
+    <Content Include="APIKeys.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

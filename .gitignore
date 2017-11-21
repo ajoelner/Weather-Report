@@ -286,7 +286,4 @@ __pycache__/
 *.btm.cs
 *.odx.cs
 *.xsd.cs
-WeatherReport/WeatherReport/Configs/GoogleAPIClientID.config
-WeatherReport/WeatherReport/Configs/GoogleAPIClientSecret.config
-WeatherReport/WeatherReport/Configs/GoogleAPIKey.config
-WeatherReport/WeatherReport/Configs/WeatherAPIKey.config
+WeatherReport/WeatherReport/APIKeys.config
