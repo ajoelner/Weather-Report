@@ -103,13 +103,14 @@ namespace WeatherReport.Models.DataModel
                         //If latitude is a single digit format with just one diget this will eliminate a leading 0
                         //laditudes should not have leading zeros with the API I am using
                         string latFormat = null;
-                        if (latStr.Length > 1)
+
+                        if (latStr.Length == 2 && latStr.Contains("-"))
                         {
-                            latFormat = "00";
+                            latFormat = "0";
                         }
                         else
                         {
-                            latFormat = "0";
+                            latFormat = "00";
                         }
 
                         //gathering a list of cities from API cities list which lay on the same latitude as the city being searched for.
