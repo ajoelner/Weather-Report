@@ -104,7 +104,7 @@ namespace WeatherReport.Models.DataModel
                         //laditudes should not have leading zeros with the API I am using
                         string latFormat = null;
 
-                        if (latStr.Length == 2 && latStr.Contains("-"))
+                        if (latStr.Length == 2 && latStr.Contains("-") || latStr.Length == 1)
                         {
                             latFormat = "0";
                         }
