@@ -1,0 +1,110 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>index</title>
+
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBKTcTwZCYmi11gKuIIktGC2683u0_f43c&callback=initMap">
+    </script>
+
+    <script>
+        var map;
+        var markers = [];
+        var geoCoding = new google.maps.Geocoder();
+        function initMap() {
+            var uluru = { lat: 38.685, lng: -93.251 };
+            map = new google.maps.Map(document.getElementById('map'),
+                {
+                    zoom: 4,
+                    center: uluru
+                });
+
+            google.maps.event.addListener(map, "click", function (e) {
+
+                if (markers.length > 0) {
+                    deleteMarkers();
+                }
+
+                uluru = { lat: e.latLng.lat(), lng: e.latLng.lng() };
+
+                document.getElementById("lat").innerHTML = uluru.lat;
+                document.getElementById("lon").innerHTML = uluru.lng;
+
+                var marker = new google.maps.Marker
+                    ({
+                        position: uluru,
+                        map: map
+                    });
+                markers.push(marker);
+
+                GetCityFromCoords(uluru, geoCoding);
+            });
+
+        }
+
+        function GetCityFromCoords(uluru, geoCoding) {
+            var lat = uluru.lat;
+            var lng = uluru.lng;
+            codeLatLng(lat, lng, geoCoding)
+        }
+
+        function clearMarkers() {
+            setMapOnAll(null);
+        }
+        function deleteMarkers() {
+            clearMarkers();
+            markers = [];
+        }
+        // Sets the map on all markers in the array.
+        function setMapOnAll(map) {
+            for (var i = 0; i < markers.length; i++) {
+                markers[i].setMap(map);
+            }
+        }
+        function codeLatLng(lat, lng, geoCoding) {
+
+            var latlng = new google.maps.LatLng(lat, lng);
+            geocoder.geocode({ 'latLng': latlng }, function (results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    console.log(results)
+                    if (results[1]) {
+                        //formatted address
+                        alert(results[0].formatted_address)
+                        //find country name
+                        for (var i = 0; i < results[0].address_components.length; i++) {
+                            for (var b = 0; b < results[0].address_components[i].types.length; b++) {
+
+                                //there are different types that might hold a city admin_area_lvl_1 usually does in come cases looking for sublocality type will be more appropriate
+                                if (results[0].address_components[i].types[b] == "administrative_area_level_1") {
+                                    //this is the object you are looking for
+                                    city = results[0].address_components[i];
+                                    break;
+                                }
+                            }
+                        }
+                        //city data
+                        alert(city.short_name + " " + city.long_name)
+
+                    } else {
+                        alert("No results found");
+                    }
+                } else {
+                    alert("Geocoder failed due to: " + status);
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+    <div id="map" style="height: 400px;width:100%"></div>
+
+    <span id='lat' style="visibility:hidden"></span>
+    <span id='lon' style="visibility:hidden"></span>
+</body>
+</html>

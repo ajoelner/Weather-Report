@@ -137,6 +137,7 @@
     </Content>
     <Content Include="Views\Home\index.cshtml" />
     <Content Include="APIKeys.config" />
+    <Content Include="Views\Home\Map.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
