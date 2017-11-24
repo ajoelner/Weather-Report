@@ -16,9 +16,10 @@
     <script>
         var map;
         var markers = [];
-        var geoCoding = new google.maps.Geocoder();
         function initMap() {
             var uluru = { lat: 38.685, lng: -93.251 };
+            var geocoder = new google.maps.Geocoder;
+            var infowindow = new google.maps.InfoWindow;
             map = new google.maps.Map(document.getElementById('map'),
                 {
                     zoom: 4,
@@ -36,22 +37,10 @@
                 document.getElementById("lat").innerHTML = uluru.lat;
                 document.getElementById("lon").innerHTML = uluru.lng;
 
-                var marker = new google.maps.Marker
-                    ({
-                        position: uluru,
-                        map: map
-                    });
-                markers.push(marker);
+                geocodeLatLng(geocoder, map, infowindow, uluru, markers);
 
-                GetCityFromCoords(uluru, geoCoding);
             });
 
-        }
-
-        function GetCityFromCoords(uluru, geoCoding) {
-            var lat = uluru.lat;
-            var lng = uluru.lng;
-            codeLatLng(lat, lng, geoCoding)
         }
 
         function clearMarkers() {
@@ -67,35 +56,27 @@
                 markers[i].setMap(map);
             }
         }
-        function codeLatLng(lat, lng, geoCoding) {
 
-            var latlng = new google.maps.LatLng(lat, lng);
-            geocoder.geocode({ 'latLng': latlng }, function (results, status) {
-                if (status == google.maps.GeocoderStatus.OK) {
-                    console.log(results)
-                    if (results[1]) {
-                        //formatted address
-                        alert(results[0].formatted_address)
-                        //find country name
-                        for (var i = 0; i < results[0].address_components.length; i++) {
-                            for (var b = 0; b < results[0].address_components[i].types.length; b++) {
+        //pulls back the address where the user clicks on the map
+        function geocodeLatLng(geocoder, map, infowindow, uluru, markers) {
+            geocoder.geocode({ 'location': uluru }, function (results, status) {
+                if (status === 'OK') {
+                    if (results[0]) {
+                        map.setZoom(13);
+                        var marker = new google.maps.Marker({
+                            position: uluru,
+                            map: map
+                        });
+                        markers.push(marker);
+                        infowindow.setContent(results[0].formatted_address);
+                        infowindow.open(map, marker);
 
-                                //there are different types that might hold a city admin_area_lvl_1 usually does in come cases looking for sublocality type will be more appropriate
-                                if (results[0].address_components[i].types[b] == "administrative_area_level_1") {
-                                    //this is the object you are looking for
-                                    city = results[0].address_components[i];
-                                    break;
-                                }
-                            }
-                        }
-                        //city data
-                        alert(city.short_name + " " + city.long_name)
-
+                        document.getElementById("address").innerHTML = results[0].formatted_address;
                     } else {
-                        alert("No results found");
+                        window.alert('No results found');
                     }
                 } else {
-                    alert("Geocoder failed due to: " + status);
+                    window.alert('Geocoder failed due to: ' + status);
                 }
             });
         }
@@ -105,6 +86,12 @@
     <div id="map" style="height: 400px;width:100%"></div>
 
     <span id='lat' style="visibility:hidden"></span>
+    <br />
     <span id='lon' style="visibility:hidden"></span>
+    <br />
+    Address: <span id="address"></span>
+    <br />
+
+    <button>Get Weather</button>
 </body>
 </html>
