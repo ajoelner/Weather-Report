@@ -13,17 +13,20 @@
     <script>
         var map;
         var markers = [];
-        var uluru = { lat: 38.685, lng: -93.251 };
+        var uluru = @Html.ViewBag.cords;
 
         function initMap() {
             var geocoder = new google.maps.Geocoder;
             var infowindow = new google.maps.InfoWindow;
             map = new google.maps.Map(document.getElementById('map'),
                 {
-                    zoom: 4,
+                    zoom: 11,
                     center: uluru
                 });
+            //Passing location into geocodingLat method to replace the marker on the location the user tried to pull back weather for so the post back doesnt loose the marker
+            geocodeLatLng(geocoder, map, infowindow, uluru, markers);
 
+            //When user clicks on the map a marker will show and prompt the user with the address marked
             google.maps.event.addListener(map, "click", function (e) {
 
                 if (markers.length > 0) {

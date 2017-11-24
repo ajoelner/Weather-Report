@@ -10,6 +10,24 @@ namespace WeatherReport.Models.DataModel
 {
     public class WeatherAPI
     {
+        public int Cloud { get; set; }
+        public double Pressure { get; set; }
+        public int Humitity { get; set; }
+        public double MaxTemp { get; set; }
+        public double MinTemp { get; set; }
+        public double Temp { get; set; }
+        public string WeatherStatus { get; set; }
+        public double WindDirection { get; set; }
+        public double WindSpeed { get; set; }
+        public string WeatherStatusStr { get; set; }
+
+        /// <summary>
+        /// Getting Current weather by city name state and country
+        /// This will find  the closest weather station to the city being requested weather reports for
+        /// </summary>
+        /// <param name="city"></param>
+        /// <param name="state"></param>
+        /// <param name="country"></param>
         public void CurrentWeatherByCityID(string city, string state, string country)
         {
             string cityID = FindCityIDFromCityNameAndStateAndCountry(city, state, country);
@@ -30,9 +48,13 @@ namespace WeatherReport.Models.DataModel
                     {
                         StreamReader reader = new StreamReader(stream, System.Text.Encoding.UTF8);
                         jsonString = reader.ReadToEnd();
+
+                        stream.Close();
                     }
 
                     List WeatherReport = JsonConvert.DeserializeObject<List>(jsonString);
+
+                    SetWeatherProperties(WeatherReport);
                 }
             }
             else
@@ -71,6 +93,8 @@ namespace WeatherReport.Models.DataModel
                 {
                     StreamReader reader = new StreamReader(stream, System.Text.Encoding.UTF8);
                     jsonString = reader.ReadToEnd();
+
+                    stream.Close();
                 }
 
                 RootObject2 cityInformation = JsonConvert.DeserializeObject<RootObject2>(jsonString);
@@ -98,6 +122,8 @@ namespace WeatherReport.Models.DataModel
                         {
                             string json = r.ReadToEnd();
                             citiesJson = JsonConvert.DeserializeObject<List<City>>(json);
+
+                            r.Close();
                         }
 
                         //If latitude is a single digit format with just one diget this will eliminate a leading 0
@@ -157,6 +183,52 @@ namespace WeatherReport.Models.DataModel
             }
 
             return cityID;
+        }
+
+        public void CurrentWeatherByLatLong(string lat, string lng)
+        {
+            HttpWebRequest WebReq = (HttpWebRequest)WebRequest.Create(string.Format("http://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lng + "&appid=" + ConfigurationManager.AppSettings["WEATHERAPIKEY"].ToString()));
+
+            WebReq.Method = "GET";
+
+            HttpWebResponse WebResp = (HttpWebResponse)WebReq.GetResponse();
+
+            if (WebResp.StatusCode.ToString() == "OK")
+            {
+                string jsonString;
+
+                using (Stream stream = WebResp.GetResponseStream())
+                {
+                    StreamReader reader = new StreamReader(stream, System.Text.Encoding.UTF8);
+                    jsonString = reader.ReadToEnd();
+
+                    stream.Close();
+                }
+
+                List WeatherReport = JsonConvert.DeserializeObject<List>(jsonString);
+
+                SetWeatherProperties(WeatherReport);
+            }
+        }
+
+        //Setting properties to weather report to pass to controller to than be passed to the view
+        private void SetWeatherProperties(List WeatherReport)
+        {
+            List Weather = new List();
+            Weather.main = WeatherReport.main;
+            Weather.weather = WeatherReport.weather;
+            Weather.clouds = WeatherReport.clouds;
+            Weather.wind = WeatherReport.wind;
+
+            Cloud = Weather.clouds.all;
+            Pressure = Weather.main.pressure;
+            Humitity = Weather.main.humidity;
+            MaxTemp = Weather.main.temp_max;
+            MinTemp = Weather.main.temp_min;
+            Temp = Weather.main.temp;
+            WeatherStatus = Weather.weather[0].description;
+            WindDirection = Weather.wind.deg;
+            WindSpeed = Weather.wind.speed;
         }
 
         /// <summary>
