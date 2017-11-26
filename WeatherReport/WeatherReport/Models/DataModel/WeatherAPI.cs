@@ -13,9 +13,12 @@ namespace WeatherReport.Models.DataModel
         public int Cloud { get; set; }
         public double Pressure { get; set; }
         public int Humitity { get; set; }
-        public double MaxTemp { get; set; }
-        public double MinTemp { get; set; }
-        public double Temp { get; set; }
+        public double MaxTempCelsius { get; set; }
+        public double MaxTempFahrenheit { get; set; }
+        public double MinTempCelsius { get; set; }
+        public double MinTempFahrenheit { get; set; }
+        public double TempCelsius { get; set; }
+        public double TempFahrenheit { get; set; }
         public string WeatherStatus { get; set; }
         public double WindDirection { get; set; }
         public double WindSpeed { get; set; }
@@ -223,12 +226,15 @@ namespace WeatherReport.Models.DataModel
             Cloud = Weather.clouds.all;
             Pressure = Weather.main.pressure;
             Humitity = Weather.main.humidity;
-            MaxTemp = Weather.main.temp_max;
-            MinTemp = Weather.main.temp_min;
-            Temp = Weather.main.temp;
+            MaxTempCelsius = ConvertFromKelvinToCelsius(Weather.main.temp_max);
+            MaxTempFahrenheit = ConvertFromKelvinToFahrenheit(Weather.main.temp_max);
+            MinTempCelsius = ConvertFromKelvinToCelsius(Weather.main.temp_min);
+            MinTempFahrenheit = ConvertFromKelvinToFahrenheit(Weather.main.temp_min);
+            TempCelsius = ConvertFromKelvinToCelsius(Weather.main.temp);
+            TempFahrenheit = ConvertFromKelvinToFahrenheit(Weather.main.temp);
             WeatherStatus = Weather.weather[0].description;
-            WindDirection = Weather.wind.deg;
-            WindSpeed = Weather.wind.speed;
+            WindDirection = Math.Round(Weather.wind.deg);
+            WindSpeed = Math.Round(Weather.wind.speed);
         }
 
         /// <summary>
@@ -255,6 +261,26 @@ namespace WeatherReport.Models.DataModel
         private double toRadians(double angle)
         {
             return Math.PI * angle / 180.0;
+        }
+
+        //Converts Kelvin to Fahrenheit
+        private double ConvertFromKelvinToFahrenheit(double kelvinTemp)
+        {
+            double result = 0.00;
+
+            result = Math.Round(kelvinTemp * 9 / 5 - 459.67);
+
+            return result;
+        }
+
+        //Converts Kelvin to Celsius
+        private double ConvertFromKelvinToCelsius(double kelvinTemp)
+        {
+            double result = 0.00;
+
+            result = Math.Round(kelvinTemp - 273.15);
+
+            return result;
         }
     }
 }

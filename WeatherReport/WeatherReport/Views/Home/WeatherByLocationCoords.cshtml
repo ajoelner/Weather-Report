@@ -104,7 +104,23 @@
         </div>
 
         <input type="submit" class="btn btn-primary" value="Forcast" />
+    }
+
+    @if (Session["WeatherReport"] != null)
+    {
+        WeatherReport.Models.DataModel.WeatherAPI weatherReport = (WeatherReport.Models.DataModel.WeatherAPI)Session["WeatherReport"];
+
+        <label>Weather Status: @weatherReport.WeatherStatus.ToString()</label>
+        <br />
+        <label>Temptrature: @weatherReport.TempFahrenheit.ToString()</label>
+        <br />
+        <label>Wind: @weatherReport.WindSpeed.ToString() / @weatherReport.WindDirection</label>
+        <br />
 
     }
+
+    <div class="error">
+        @Html.ValidationSummary("", new { @class = "text-danger" })
+    </div>
 </body>
 </html>

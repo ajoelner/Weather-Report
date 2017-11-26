@@ -101,7 +101,10 @@
         </div>
 
         <input type="submit" class="btn btn-primary" value="Forcast" />
-
     }
+
+    <div class="error">
+        @Html.ValidationSummary("", new { @class = "text-danger" })
+    </div>
 </body>
 </html>

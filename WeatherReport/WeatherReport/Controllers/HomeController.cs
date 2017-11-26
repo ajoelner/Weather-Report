@@ -15,12 +15,26 @@ namespace WeatherReport.Controllers
         public ActionResult WeatherByLocation(LocationViewModel model)
         {
             WeatherAPI forcast = new WeatherAPI();
-            forcast.CurrentWeatherByLatLong(model.Lat, model.Lng);
 
-            //setting a view bag to send the last location the user requested weather for so on post back I can set the map to the same location
-            ViewBag.cords = "{ lat:" + model.Lat + ", lng: " + model.Lng + " }";
+            //If the forcast button is clicked without setting a marker an error will show.
+            if (model.Lat != null && model.Lng != null)
+            {
+                forcast.CurrentWeatherByLatLong(model.Lat, model.Lng);
 
-            return View("WeatherByLocationCoords", model);
+                //Adding WeatherAPI object to a session to be able to display the weather to the view
+                Session["WeatherReport"] = forcast;
+
+                //setting a view bag to send the last location the user requested weather for so on post back I can set the map to the same location
+                ViewBag.cords = "{ lat:" + model.Lat + ", lng: " + model.Lng + " }";
+
+                return View("WeatherByLocationCoords", model);
+            }
+            else
+            {
+                ModelState.AddModelError("", "Location was not found.");
+
+                return View("Map", model);
+            }
         }
     }
 }
