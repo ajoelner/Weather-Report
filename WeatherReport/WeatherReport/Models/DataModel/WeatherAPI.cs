@@ -21,7 +21,7 @@ namespace WeatherReport.Models.DataModel
         public double TempFahrenheit { get; set; }
         public string WeatherStatus { get; set; }
         public double WindDirection { get; set; }
-        public double WindSpeed { get; set; }
+        public int WindSpeed { get; set; }
         public string WeatherStatusStr { get; set; }
 
         /// <summary>
@@ -234,7 +234,7 @@ namespace WeatherReport.Models.DataModel
             TempFahrenheit = ConvertFromKelvinToFahrenheit(Weather.main.temp);
             WeatherStatus = Weather.weather[0].description;
             WindDirection = Math.Round(Weather.wind.deg);
-            WindSpeed = Math.Round(Weather.wind.speed);
+            WindSpeed = ConvertFromMPSToMPH(Weather.wind.speed);
         }
 
         /// <summary>
@@ -281,6 +281,17 @@ namespace WeatherReport.Models.DataModel
             result = Math.Round(kelvinTemp - 273.15);
 
             return result;
+        }
+
+        //Converts meters per second to MPH wind speeds
+        private int ConvertFromMPSToMPH(double windSpeed)
+        {
+            const decimal mpsCalculationRate = 2.23694m;
+            decimal result = 0.00m;
+
+            result = Math.Round((decimal)windSpeed * mpsCalculationRate);
+
+            return (int)result;
         }
     }
 }
