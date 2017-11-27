@@ -341,6 +341,9 @@ public class Snow
 public class Sys
 {
     public string pod { get; set; }
+    public string country { get; set; }
+    public int sunrise { get; set; }
+    public int sunset { get; set; }
 }
 
 public class List
@@ -354,6 +357,7 @@ public class List
     public Snow snow { get; set; }
     public Sys sys { get; set; }
     public string dt_txt { get; set; }
+    public int visibility { get; set; }
 }
 
 public class Coord
