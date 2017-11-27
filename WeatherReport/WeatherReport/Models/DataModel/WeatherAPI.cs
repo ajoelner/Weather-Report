@@ -158,6 +158,7 @@ namespace WeatherReport.Models.DataModel
                             if (count == 0)
                             {
                                 holdDistance = distance;
+                                holdCity = item;
                             }
                             else
                             {
